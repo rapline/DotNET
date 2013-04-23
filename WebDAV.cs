@@ -11,48 +11,48 @@ using System.Threading;
 namespace WebDAV
 {
 	/// <summary>
-	/// WebDAVConnectƒNƒ‰ƒX
+	/// WebDAVConnectã‚¯ãƒ©ã‚¹
 	/// </summary>
 	public class WebDAVConnect
 	{
-		#region ƒNƒ‰ƒX’è”
+		#region ã‚¯ãƒ©ã‚¹å®šæ•°
 		
-		// ƒpƒXƒZƒpƒŒ[ƒ^•¶š—ñ
+		// ãƒ‘ã‚¹ã‚»ãƒ‘ãƒ¬ãƒ¼ã‚¿æ–‡å­—åˆ—
 		private readonly string PATH_SEPARATOR = Path.DirectorySeparatorChar.ToString();	
 
-		// ƒƒCƒ‹ƒhƒJ[ƒh•¶š—ñ
+		// ãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰æ–‡å­—åˆ—
 		private const string WILD_CARD = @"*";
 
-		// URLƒZƒpƒŒ[ƒ^•¶š—ñ
+		// URLã‚»ãƒ‘ãƒ¬ãƒ¼ã‚¿æ–‡å­—åˆ—
 		private const string URI_SEPARATOR = @"/";
 
-		// ƒGƒ“ƒR[ƒh
+		// ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰
 		private const string ENCODE = "shift_jis";
 
-		// ƒtƒ@ƒCƒ‹ƒŠƒXƒgƒe[ƒuƒ‹—ñ–¼
+		// ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆãƒ†ãƒ¼ãƒ–ãƒ«åˆ—å
 		private const string COL_NAME = "NAME";
 		private const string COL_TYPE = "TYPE";
 
-		// HTTP/WebDAVƒvƒƒgƒRƒ‹ƒƒ\ƒbƒh
+		// HTTP/WebDAVãƒ—ãƒ­ãƒˆã‚³ãƒ«ãƒ¡ã‚½ãƒƒãƒ‰
 		private const string HTTP_METHOD_GET	= "GET";
 		private const string HTTP_METHOD_PUT	= "PUT";
 		private const string WEBDAV_METHOD_PROPFIND	= "PROPFIND";
 
 		#endregion
 
-		#region ƒNƒ‰ƒX•Ï”
-		private int timeOutSec;		// ƒ^ƒCƒ€ƒAƒEƒgŠÔi•bj
-		private int retryCount;		// ƒŠƒgƒ‰ƒC‰ñ”
-		private int retryInterval;	// ƒŠƒgƒ‰ƒC‚ÌƒCƒ“ƒ^[ƒoƒ‹i•bj
-		private Encoding encoding;	// ƒGƒ“ƒR[ƒh
+		#region ã‚¯ãƒ©ã‚¹å¤‰æ•°
+		private int timeOutSec;		// ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆæ™‚é–“ï¼ˆç§’ï¼‰
+		private int retryCount;		// ãƒªãƒˆãƒ©ã‚¤å›æ•°
+		private int retryInterval;	// ãƒªãƒˆãƒ©ã‚¤æ™‚ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒ«ï¼ˆç§’ï¼‰
+		private Encoding encoding;	// ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰
 		#endregion
 
 
-		// public ƒƒ\ƒbƒh
+		// public ãƒ¡ã‚½ãƒƒãƒ‰
 
-		#region ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		#region ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 		/// <summary>
-		/// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		/// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 		/// </summary>
         public WebDAVConnect()
 		{
@@ -60,28 +60,28 @@ namespace WebDAV
 		}
 		#endregion
 
-		#region ƒtƒ@ƒCƒ‹æ“¾
+		#region ãƒ•ã‚¡ã‚¤ãƒ«å–å¾—
 		public void GetFile(string serverPath, string localPath)
 		{
-			// Ú‘±î•ñ‚ğİ’è
+			// æ¥ç¶šæƒ…å ±ã‚’è¨­å®š
             this.setConnectInfo();
 
-			// ƒT[ƒoƒpƒX‚Ì––”ö‚ª'/'‚Å‚È‚¯‚ê‚Î’Ç‰Á
+			// ã‚µãƒ¼ãƒãƒ‘ã‚¹ã®æœ«å°¾ãŒ'/'ã§ãªã‘ã‚Œã°è¿½åŠ 
 			if(!serverPath.EndsWith(URI_SEPARATOR))
 			{
 				serverPath += URI_SEPARATOR;
 			}
 
-			// ƒ[ƒJƒ‹ƒpƒX‚Ì––”ö‚ª'\'‚Å‚È‚¯‚ê‚Î’Ç‰Á
+			// ãƒ­ãƒ¼ã‚«ãƒ«ãƒ‘ã‚¹ã®æœ«å°¾ãŒ'\'ã§ãªã‘ã‚Œã°è¿½åŠ 
 			if(!localPath.EndsWith(PATH_SEPARATOR))
 			{
 				localPath += PATH_SEPARATOR;
 			}
 
-            // ƒ_ƒEƒ“ƒ[ƒh‘ÎÛƒtƒ@ƒCƒ‹ƒŠƒXƒgæ“¾
+            // ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰å¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆå–å¾—
 			DataTable table = this.getFileList(serverPath);
 
-			// ƒ_ƒEƒ“ƒ[ƒh
+			// ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰
 			if(table != null)
 			{
 				DataRow[] drs = table.Select();
@@ -90,7 +90,7 @@ namespace WebDAV
 					string serverFileName = serverPath + URI_SEPARATOR + dr[COL_NAME].ToString();
 					string localFileName = localPath + dr[COL_NAME].ToString();
 
-					// ƒf[ƒ^ƒtƒ@ƒCƒ‹ƒ_ƒEƒ“ƒ[ƒh
+					// ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰
 					try
 					{
 						this.get(serverFileName, localFileName);
@@ -105,9 +105,9 @@ namespace WebDAV
 		#endregion
 
 	
-		// private ƒƒ\ƒbƒh
+		// private ãƒ¡ã‚½ãƒƒãƒ‰
 
-		#region Ú‘±î•ñ‚ğİ’è
+		#region æ¥ç¶šæƒ…å ±ã‚’è¨­å®š
 		private string setConnectInfo()
 		{
 			this.timeOutSec = 30;
@@ -120,7 +120,7 @@ namespace WebDAV
 		}
 		#endregion
 
-		#region ƒtƒ@ƒCƒ‹ƒŠƒXƒgæ“¾
+		#region ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆå–å¾—
 		private DataTable getFileList(string serverPath)
 		{
 			XmlDocument doc = new XmlDocument();
@@ -129,7 +129,7 @@ namespace WebDAV
 
 			XmlElement root = doc.DocumentElement;
 
-			// ƒvƒŒƒtƒBƒbƒNƒXæ“¾
+			// ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹å–å¾—
 			string prefix = root.Prefix;
 
 			XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
@@ -164,7 +164,7 @@ namespace WebDAV
 		}
 		#endregion
 
-		#region ƒtƒ@ƒCƒ‹ƒŠƒXƒgæ“¾ƒRƒAˆ—
+		#region ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆå–å¾—ã‚³ã‚¢å‡¦ç†
 		private XmlDocument propFind(string serverPath)
 		{
 			HttpWebRequest webReq = null;
@@ -178,38 +178,38 @@ namespace WebDAV
 			{
 				try
 				{
-					// PROPFINDƒRƒ}ƒ“ƒhì¬
+					// PROPFINDã‚³ãƒãƒ³ãƒ‰ä½œæˆ
 					string strData = this.createPROPFINDCmd();
 
-					// HTTPƒwƒbƒ_î•ñ
+					// HTTPãƒ˜ãƒƒãƒ€æƒ…å ±
 					webReq = (HttpWebRequest)WebRequest.Create(serverPath);
 					webReq.KeepAlive = true;
 					webReq.Headers.Set("Pragma", "no-cache");
 					webReq.Headers.Set("Depth", "1,noroot");
 					webReq.ContentType =  "text/xml";
 
-					// ƒ^ƒCƒ€ƒAƒEƒgŠÔ
+					// ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆæ™‚é–“
 					webReq.Timeout = this.timeOutSec * 1000;
-					// ƒŠƒNƒGƒXƒgƒRƒ}ƒ“ƒh
+					// ãƒªã‚¯ã‚¨ã‚¹ãƒˆã‚³ãƒãƒ³ãƒ‰
 					webReq.Method = WEBDAV_METHOD_PROPFIND;
 
-					// ƒNƒGƒŠ‚ğƒoƒCƒg”z—ñ‚É‚·‚é
+					// ã‚¯ã‚¨ãƒªã‚’ãƒã‚¤ãƒˆé…åˆ—ã«ã™ã‚‹
 					byteData = this.encoding.GetBytes(strData);
 					webReq.ContentLength = byteData.Length;
 
-					// ƒŠƒNƒGƒXƒgƒXƒgƒŠ[ƒ€
+					// ãƒªã‚¯ã‚¨ã‚¹ãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ 
 					sendStrm = webReq.GetRequestStream();
 					sendStrm.Write(byteData, 0, byteData.Length);
 					sendStrm.Close();
 
-					// ƒŠƒNƒGƒXƒg‘—M
+					// ãƒªã‚¯ã‚¨ã‚¹ãƒˆé€ä¿¡
 					webRes = (HttpWebResponse)webReq.GetResponse();
 
-					// Œ‹‰ÊƒR[ƒhæ“¾
+					// çµæœã‚³ãƒ¼ãƒ‰å–å¾—
 					int iStatCode =  (int)webRes.StatusCode;
 					string sStatus = iStatCode.ToString();
 
-					// Œ‹‰ÊóM
+					// çµæœå—ä¿¡
 					rtnStrm = webRes.GetResponseStream();
 
 					doc = new XmlDocument();
@@ -243,14 +243,14 @@ namespace WebDAV
 		}
 		#endregion
 
-		#region óMƒRƒAˆ—
+		#region å—ä¿¡ã‚³ã‚¢å‡¦ç†
 		private void get(string serverPath, string localPath)
 		{
-			// WEBƒŠƒNƒGƒXƒg
+			// WEBãƒªã‚¯ã‚¨ã‚¹ãƒˆ
 			WebRequest webReq = null;
-			// ƒŒƒXƒ|ƒ“ƒX
+			// ãƒ¬ã‚¹ãƒãƒ³ã‚¹
 			WebResponse webRes = null;
-			// óMƒXƒgƒŠ[ƒ€
+			// å—ä¿¡ã‚¹ãƒˆãƒªãƒ¼ãƒ 
 			Stream strm = null;
 
 			StreamReader sr = null;
@@ -270,7 +270,7 @@ namespace WebDAV
 					string data = sr.ReadToEnd();
 					sr.Close();
 
-					// ƒ[ƒJƒ‹ƒtƒ@ƒCƒ‹‘
+					// ãƒ­ãƒ¼ã‚«ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«æ›¸è¾¼
 					sw = new StreamWriter(localPath, false, this.encoding);
 					sw.Write(data);
 					sw.Close();
@@ -299,7 +299,7 @@ namespace WebDAV
 		}
 		#endregion
 
-		#region ‘—MƒRƒAˆ—
+		#region é€ä¿¡ã‚³ã‚¢å‡¦ç†
 		private void put(string localPath, string serverPath)
 		{
 			byte[] byteData = null;
@@ -308,7 +308,7 @@ namespace WebDAV
 			HttpWebRequest webReq = null;
 			HttpWebResponse webRes = null;
 
-			// ƒ[ƒJƒ‹ƒtƒ@ƒCƒ‹“Ç
+			// ãƒ­ãƒ¼ã‚«ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼
 			byteData = null;
 			if(localPath != null && localPath.Length > 0)
 			{
@@ -327,7 +327,7 @@ namespace WebDAV
 			{
 				try
 				{
-					// HTTPƒŠƒNƒGƒXƒgì¬
+					// HTTPãƒªã‚¯ã‚¨ã‚¹ãƒˆä½œæˆ
 					webReq = (HttpWebRequest)HttpWebRequest.Create(serverPath); 
 					webReq.Method = HTTP_METHOD_PUT; 
 					webReq.ContentType = "text/plain";
@@ -335,12 +335,12 @@ namespace WebDAV
 					webReq.KeepAlive = true; 
 					webReq.Timeout = this.timeOutSec * 1000;
 
-					// ‘—MƒXƒgƒŠ[ƒ€
+					// é€ä¿¡ã‚¹ãƒˆãƒªãƒ¼ãƒ 
 					dataStream = webReq.GetRequestStream(); 
 					dataStream.Write(byteData, 0, byteData.Length); 
 					dataStream.Close(); 
 
-					// ƒŒƒXƒ|ƒ“ƒXæ“¾
+					// ãƒ¬ã‚¹ãƒãƒ³ã‚¹å–å¾—
 					webRes = (HttpWebResponse)webReq.GetResponse();
 					string response = webRes.StatusCode.ToString(); 
 					webRes.Close();
@@ -368,7 +368,7 @@ namespace WebDAV
 		}
 		#endregion
 
-		#region PROPFINDƒRƒ}ƒ“ƒhì¬
+		#region PROPFINDã‚³ãƒãƒ³ãƒ‰ä½œæˆ
 		private string createPROPFINDCmd()
 		{
 			return "<?xml version=\"1.0\" encoding=\"utf-8\" ?><propfind xmlns=\"DAV:\">  <prop>\t<displayname/>\t<iscollection/>  </prop></propfind>";
